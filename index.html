@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quiz Management</title>
+<title>Simulare Examen</title>
 
 <style>
 body{
@@ -21,10 +21,10 @@ color:#2563eb;
 
 .quiz-box{
 background:white;
-padding:20px;
+padding:25px;
 border-radius:20px;
-margin-top:20px;
 box-shadow:0 5px 15px rgba(0,0,0,0.1);
+margin-top:20px;
 }
 
 .question{
@@ -37,11 +37,12 @@ display:block;
 width:100%;
 padding:15px;
 margin:10px 0;
-border-radius:12px;
 border:none;
-background:#f3f4f6;
-font-size:18px;
+border-radius:12px;
+background:#f1f5f9;
 cursor:pointer;
+font-size:18px;
+transition:0.3s;
 }
 
 .answer:hover{
@@ -58,6 +59,18 @@ background:#ef4444 !important;
 color:white;
 }
 
+#nextBtn{
+margin-top:20px;
+padding:12px 25px;
+border:none;
+border-radius:12px;
+background:#2563eb;
+color:white;
+font-size:18px;
+cursor:pointer;
+display:none;
+}
+
 #score{
 font-size:22px;
 text-align:center;
@@ -72,19 +85,24 @@ font-weight:bold;
 <h1>Simulare Examen</h1>
 
 <div class="quiz-box">
+
 <div id="question" class="question"></div>
+
 <div id="answers"></div>
-</div>
+
+<button id="nextBtn">Întrebarea următoare</button>
 
 <div id="score"></div>
+
+</div>
 
 <script>
 
 const quiz = [
 
 {
-q:"Ce reprezintă managementul clasei?",
-a:[
+question:"Ce reprezintă managementul clasei?",
+answers:[
 "Conducerea eficientă a activităților clasei",
 "Doar predarea lecției",
 "Controlul elevilor",
@@ -94,23 +112,23 @@ correct:0
 },
 
 {
-q:"Cine afirma că sarcina conducătorului este să fie eficient?",
-a:[
-"Piaget",
-"Freud",
-"P.F. Drucker",
-"Watson"
+question:"Care este rolul profesorului?",
+answers:[
+"Să ignore elevii",
+"Să coordoneze procesul educațional",
+"Să ofere doar note",
+"Să controleze părinții"
 ],
-correct:2
+correct:1
 },
 
 {
-q:"Managementul educațional este:",
-a:[
-"Un proces de conducere",
-"O boală",
-"O metodă de pedeapsă",
-"Un joc"
+question:"Ce este comunicarea didactică?",
+answers:[
+"Transmiterea eficientă a informației",
+"Un conflict",
+"O pedeapsă",
+"O regulă"
 ],
 correct:0
 }
@@ -120,64 +138,92 @@ correct:0
 let currentQuestion = 0;
 let score = 0;
 
-function loadQuestion(){
+const questionEl = document.getElementById("question");
+const answersEl = document.getElementById("answers");
+const nextBtn = document.getElementById("nextBtn");
+const scoreEl = document.getElementById("score");
 
-if(currentQuestion >= quiz.length){
-document.querySelector(".quiz-box").innerHTML =
-"<h2>Quiz terminat!</h2>";
+function showQuestion(){
 
-document.getElementById("score").innerHTML =
-"Scor final: " + score + " / " + quiz.length;
-
-return;
-}
+nextBtn.style.display="none";
 
 const q = quiz[currentQuestion];
 
-document.getElementById("question").innerText =
-(currentQuestion + 1) + ". " + q.q;
+questionEl.innerText = (currentQuestion+1)+". "+q.question;
 
-const answersDiv = document.getElementById("answers");
-answersDiv.innerHTML = "";
+answersEl.innerHTML="";
 
-q.a.forEach((answer,index)=>{
+q.answers.forEach((answer,index)=>{
 
-const btn = document.createElement("button");
+const btn=document.createElement("button");
 
-btn.innerText = answer;
+btn.innerText=answer;
+
 btn.classList.add("answer");
 
-btn.onclick = ()=>checkAnswer(index,btn);
+btn.onclick=()=>selectAnswer(btn,index);
 
-answersDiv.appendChild(btn);
+answersEl.appendChild(btn);
 
 });
+
 }
 
-function checkAnswer(index,button){
+function selectAnswer(button,index){
 
-const q = quiz[currentQuestion];
+const correct = quiz[currentQuestion].correct;
 
-const buttons = document.querySelectorAll(".answer");
+const buttons=document.querySelectorAll(".answer");
 
 buttons.forEach(btn=>btn.disabled=true);
 
-if(index === q.correct){
+if(index===correct){
+
 button.classList.add("correct");
+
 score++;
+
 }else{
+
 button.classList.add("wrong");
-buttons[q.correct].classList.add("correct");
+
+buttons[correct].classList.add("correct");
+
 }
 
-setTimeout(()=>{
+nextBtn.style.display="block";
+
+}
+
+nextBtn.onclick=()=>{
+
 currentQuestion++;
-loadQuestion();
-},1200);
+
+if(currentQuestion<quiz.length){
+
+showQuestion();
+
+}else{
+
+showScore();
 
 }
 
-loadQuestion();
+}
+
+function showScore(){
+
+questionEl.innerText="Quiz finalizat!";
+
+answersEl.innerHTML="";
+
+nextBtn.style.display="none";
+
+scoreEl.innerText="Scor final: "+score+" / "+quiz.length;
+
+}
+
+showQuestion();
 
 </script>
 
