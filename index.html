@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Management</title>
+
+<style>
+body{
+font-family:Arial;
+background:#eef2f7;
+padding:20px;
+max-width:700px;
+margin:auto;
+}
+
+h1{
+text-align:center;
+color:#2563eb;
+}
+
+.quiz-box{
+background:white;
+padding:20px;
+border-radius:20px;
+margin-top:20px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+.question{
+font-size:24px;
+margin-bottom:20px;
+}
+
+.answer{
+display:block;
+width:100%;
+padding:15px;
+margin:10px 0;
+border-radius:12px;
+border:none;
+background:#f3f4f6;
+font-size:18px;
+cursor:pointer;
+}
+
+.answer:hover{
+background:#dbeafe;
+}
+
+.correct{
+background:#22c55e !important;
+color:white;
+}
+
+.wrong{
+background:#ef4444 !important;
+color:white;
+}
+
+#score{
+font-size:22px;
+text-align:center;
+margin-top:20px;
+font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Simulare Examen</h1>
+
+<div class="quiz-box">
+<div id="question" class="question"></div>
+<div id="answers"></div>
+</div>
+
+<div id="score"></div>
+
+<script>
+
+const quiz = [
+
+{
+q:"Ce reprezintă managementul clasei?",
+a:[
+"Conducerea eficientă a activităților clasei",
+"Doar predarea lecției",
+"Controlul elevilor",
+"Pedepse școlare"
+],
+correct:0
+},
+
+{
+q:"Cine afirma că sarcina conducătorului este să fie eficient?",
+a:[
+"Piaget",
+"Freud",
+"P.F. Drucker",
+"Watson"
+],
+correct:2
+},
+
+{
+q:"Managementul educațional este:",
+a:[
+"Un proces de conducere",
+"O boală",
+"O metodă de pedeapsă",
+"Un joc"
+],
+correct:0
+}
+
+];
+
+let currentQuestion = 0;
+let score = 0;
+
+function loadQuestion(){
+
+if(currentQuestion >= quiz.length){
+document.querySelector(".quiz-box").innerHTML =
+"<h2>Quiz terminat!</h2>";
+
+document.getElementById("score").innerHTML =
+"Scor final: " + score + " / " + quiz.length;
+
+return;
+}
+
+const q = quiz[currentQuestion];
+
+document.getElementById("question").innerText =
+(currentQuestion + 1) + ". " + q.q;
+
+const answersDiv = document.getElementById("answers");
+answersDiv.innerHTML = "";
+
+q.a.forEach((answer,index)=>{
+
+const btn = document.createElement("button");
+
+btn.innerText = answer;
+btn.classList.add("answer");
+
+btn.onclick = ()=>checkAnswer(index,btn);
+
+answersDiv.appendChild(btn);
+
+});
+}
+
+function checkAnswer(index,button){
+
+const q = quiz[currentQuestion];
+
+const buttons = document.querySelectorAll(".answer");
+
+buttons.forEach(btn=>btn.disabled=true);
+
+if(index === q.correct){
+button.classList.add("correct");
+score++;
+}else{
+button.classList.add("wrong");
+buttons[q.correct].classList.add("correct");
+}
+
+setTimeout(()=>{
+currentQuestion++;
+loadQuestion();
+},1200);
+
+}
+
+loadQuestion();
+
+</script>
+
+</body>
+</html>
